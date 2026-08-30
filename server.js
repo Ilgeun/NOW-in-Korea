@@ -110,7 +110,7 @@ async function fetchTrends() {
   let pending = readPendingTrends();
   if (!pending) {
     console.warn("[bootstrap] pending.json이 없어 최초 1회 직접 수집합니다.");
-    const rawTrends = await fetchRawTrends(CURRENT.trendsGeo, CURRENT.numberUnits);
+    const rawTrends = await fetchRawTrends(CURRENT.trendsGeo, CURRENT.numberFormat);
     await attachArticleText(rawTrends);
     const newsParams = { hl: CURRENT.newsHl, gl: CURRENT.newsGl, ceid: CURRENT.newsCeid };
     await Promise.all(

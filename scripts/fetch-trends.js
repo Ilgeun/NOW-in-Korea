@@ -10,7 +10,7 @@ const PENDING_PATH = path.join(DATA_DIR, "pending.json");
 
 (async () => {
   try {
-    const trends = await fetchRawTrends(CURRENT.trendsGeo, CURRENT.numberUnits);
+    const trends = await fetchRawTrends(CURRENT.trendsGeo, CURRENT.numberFormat);
     await attachArticleText(trends);
 
     const okCount = trends.reduce(
