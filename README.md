@@ -1,6 +1,6 @@
 # NOW in Korea
 
-Google Trends 공식 RSS(Daily Search Trends)를 기반으로 실시간 인기 검색어를 모아 보여주는 웹앱입니다. 각 키워드에 관련 뉴스 링크와 AI 요약을 함께 붙여줍니다. 한국(KR)/일본(JP) 두 지역을 지원합니다.
+Google Trends 공식 RSS(Daily Search Trends)를 기반으로 실시간 인기 검색어를 모아 보여주는 웹앱입니다. 각 키워드에 관련 뉴스 링크와 AI 요약을 함께 붙여줍니다. 한국(KR)/일본(JP)/미국(US)/영국(GB)/독일(DE) 다섯 지역을 지원합니다.
 
 > 네이버 실검이 아니며, 구글과 제휴 관계가 없습니다.
 
@@ -46,7 +46,7 @@ cp .env.example .env
 
 | 변수 | 설명 | 값 |
 |---|---|---|
-| `COUNTRY` | 서비스 지역 | `KR` 또는 `JP` |
+| `COUNTRY` | 서비스 지역 | `KR`, `JP`, `US`, `GB`, `DE` 중 하나 |
 
 ### 실행
 
