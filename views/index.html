@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PAGE_TITLE}}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="style.css">
+<script>window.APP_CONFIG = {{APP_CONFIG_JSON}};</script>
+</head>
+<body>
+  <nav class="topbar">
+    <div class="topbar-inner">
+      <span class="logo"><span class="logo-now">NOW</span> {{LOGO_SUFFIX}}</span>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1><span class="hero-now">Now</span><br>{{HEADING2}}</h1>
+      <p class="refresh-note">
+        <svg class="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        {{UPDATED_PREFIX}} <span id="last-updated">--</span> {{UPDATED_SUFFIX}} · <span id="countdown">--:--</span> {{COUNTDOWN_SUFFIX}}
+      </p>
+
+      <div class="search-box">
+        <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="{{SEARCH_PLACEHOLDER}}" autocomplete="off">
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <ol id="trend-list" class="trend-list" aria-live="polite"></ol>
+    <div id="error" class="error" hidden></div>
+  </main>
+
+  <footer class="footnote">
+    <p>{{FOOTER}}</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
