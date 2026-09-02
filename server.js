@@ -6,6 +6,7 @@ const { CURRENT } = require("./config");
 const { fetchRawTrends } = require("./lib/trends-fetcher");
 const { attachArticleText } = require("./lib/article-fetcher");
 const { searchLocalNews } = require("./lib/news-search");
+const { runEnrichment } = require("./lib/enrichment");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,13 @@ function triggerBackgroundEnrichIfStale(pendingGeneratedMs, now) {
   if (now - enrichTriggeredAt < ENRICH_RETRY_COOLDOWN_MS) return;
   enrichTriggeredAt = now;
 
+  // ANTHROPIC_API_KEY가 있으면(클라우드 배포) launchd/claude CLI 없이 서버가 직접 갱신한다.
+  if (process.env.ANTHROPIC_API_KEY) {
+    console.warn("[self-heal] pending.json이 2시간 이상 오래돼서 Claude API로 백그라운드 갱신합니다.");
+    runEnrichment().catch((err) => console.error("[self-heal] 갱신 실패:", err.message));
+    return;
+  }
+
   console.warn("[self-heal] pending.json이 2시간 이상 오래돼서 백그라운드로 enrich.sh를 실행합니다.");
   const child = spawn("/bin/bash", [path.join(__dirname, "scripts", "enrich.sh")], {
     detached: true,
@@ -33,6 +41,17 @@ function triggerBackgroundEnrichIfStale(pendingGeneratedMs, now) {
   });
   child.on("error", (err) => console.error("[self-heal] enrich.sh 실행 실패:", err.message));
   child.unref();
+}
+
+// 클라우드 배포용 자체 스케줄러. launchd가 없는 환경에서, 서버 프로세스 자신이 1시간마다
+// Claude API로 트렌드 수집·요약을 직접 수행한다. ANTHROPIC_API_KEY가 없으면(로컬 개발 환경)
+// 아무 것도 하지 않고, 기존처럼 launchd + scripts/enrich.sh(claude CLI)가 그 역할을 담당한다.
+function startEnrichmentScheduler() {
+  if (!process.env.ANTHROPIC_API_KEY) return;
+  runEnrichment().catch((err) => console.error("[enrichment] 초기 실행 실패:", err.message));
+  setInterval(() => {
+    runEnrichment().catch((err) => console.error("[enrichment] 주기 실행 실패:", err.message));
+  }, CRON_INTERVAL_MS);
 }
 
 const DATA_DIR = path.join(__dirname, "data");
@@ -198,4 +217,5 @@ app.get("/api/trends", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT} (country=${CURRENT.code})`);
   fetchTrends().catch((err) => console.error("[startup] initial trends load failed:", err.message));
+  startEnrichmentScheduler();
 });
