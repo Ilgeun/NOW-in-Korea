@@ -280,10 +280,12 @@ body {
   font-weight: 700;
 }
 .ai-overview {
-  margin: 0;
-  padding: 0 22px 12px;
-  font-size: 0.88rem;
-  line-height: 1.55;
+  margin: 0 22px 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.6;
   color: var(--text-main);
 }
 .ai-summary-list {
@@ -292,7 +294,7 @@ body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 .ai-summary-list li {
   position: relative;
