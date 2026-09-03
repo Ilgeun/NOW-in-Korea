@@ -104,6 +104,28 @@ function readLocalEnrichment() {
   }
 }
 
+// 직전 수집 시점 대비 순위 변동을 계산한다. pending.generatedAt이 바뀔 때(=진짜 새 데이터가
+// 왔을 때)만 스냅샷을 한 칸 전진시키고, 그 사이 30초 캐시 재조회에서는 직전에 계산해둔 값을 그대로 돌려준다.
+let rankTracking = { generatedAt: null, rankByKeyword: null, changes: null };
+
+function computeRankChanges(pending) {
+  if (rankTracking.generatedAt === pending.generatedAt) return rankTracking.changes;
+
+  const currentMap = new Map(pending.items.map((t) => [t.keyword, t.rank]));
+  let changes = null;
+  if (rankTracking.rankByKeyword) {
+    changes = new Map(
+      pending.items.map((t) => {
+        const prevRank = rankTracking.rankByKeyword.get(t.keyword);
+        // prevRank가 없으면 직전 수집(=1시간 전) 순위표엔 없던 키워드라는 뜻 → 새로 진입
+        return [t.keyword, prevRank === undefined ? "new" : prevRank - t.rank];
+      })
+    );
+  }
+  rankTracking = { generatedAt: pending.generatedAt, rankByKeyword: currentMap, changes };
+  return changes;
+}
+
 function applyLocalEnrichment(trends) {
   const byKeyword = readLocalEnrichment();
   if (!byKeyword) return trends;
@@ -146,7 +168,11 @@ async function fetchTrends() {
     pending = { generatedAt: new Date().toISOString(), items: rawTrends };
   }
 
-  const trends = applyLocalEnrichment(pending.items);
+  const rankChanges = computeRankChanges(pending);
+  const trends = applyLocalEnrichment(pending.items).map((t) => ({
+    ...t,
+    rankChange: rankChanges ? rankChanges.get(t.keyword) ?? null : null,
+  }));
 
   // 구글 RSS 항목들의 pubDate 중 가장 최신 값 = 구글이 실제로 이 데이터를 갱신한 시각
   const updatedAt = trends.reduce(
