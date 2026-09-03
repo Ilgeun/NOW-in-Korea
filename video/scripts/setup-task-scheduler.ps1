@@ -1,6 +1,6 @@
-# 딱 한 번만 실행하는 설치 스크립트: Windows 작업 스케줄러에
-# "매일 00:00 / 06:00 / 12:00 / 18:00에 run-cycle.ps1 실행"을 등록한다.
-# (macOS의 launchd plist와 동일한 역할)
+# One-time setup: registers a Windows Task Scheduler job that runs
+# run-cycle.ps1 daily at 00:00 / 06:00 / 12:00 / 18:00.
+# (Equivalent of the launchd plist used on macOS.)
 
 $scriptPath = Join-Path $PSScriptRoot "run-cycle.ps1"
 
@@ -20,8 +20,10 @@ Register-ScheduledTask -TaskName "NOW-in-Korea-VideoUploader" `
   -Action $action `
   -Trigger $triggers `
   -Settings $settings `
-  -Description "NOW in Korea - 6시간마다 트렌드 영상 생성 및 유튜브 업로드" `
+  -Description "NOW in Korea video generation and YouTube upload, 4x per day" `
   -RunLevel Limited
 
-Write-Host "`n등록 완료! '작업 스케줄러' 앱(taskschd.msc)에서 'NOW-in-Korea-VideoUploader'로 확인할 수 있습니다."
-Write-Host "지금 바로 한 번 테스트하려면: Start-ScheduledTask -TaskName 'NOW-in-Korea-VideoUploader'"
+Write-Host ""
+Write-Host "Done. Check Task Scheduler (taskschd.msc) for 'NOW-in-Korea-VideoUploader'."
+Write-Host "To test it right now, run:"
+Write-Host "  Start-ScheduledTask -TaskName 'NOW-in-Korea-VideoUploader'"
