@@ -6,8 +6,7 @@ const { google } = require("googleapis");
 const PROPS_PATH = path.join(__dirname, "..", "props.json");
 const OUT_DIR = path.join(__dirname, "..", "out");
 const SITE_URL = process.env.SITE_URL || "https://now-in-korea-production.up.railway.app";
-// 처음엔 안전하게 unlisted로 올리고, 확인 후 YouTube Studio에서 직접 공개로 전환하는 걸 권장.
-const PRIVACY_STATUS = process.env.YOUTUBE_PRIVACY_STATUS || "unlisted";
+const PRIVACY_STATUS = process.env.YOUTUBE_PRIVACY_STATUS || "public";
 
 function safeFileName(keyword) {
   return keyword.replace(/[^\w가-힣]+/g, "-").replace(/^-+|-+$/g, "");
