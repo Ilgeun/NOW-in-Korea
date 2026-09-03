@@ -10,6 +10,9 @@ const { runEnrichment } = require("./lib/enrichment");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Railway 등 리버스 프록시 뒤에서 req.protocol이 https로 정확히 잡히도록 함
+// (없으면 sitemap/canonical URL이 http로 잘못 생성됨).
+app.set("trust proxy", true);
 
 // 실제 수집·요약은 scripts/enrich.sh(launchd, 1시간마다)가 전담한다.
 // 서버는 그 결과 파일을 읽어서 서빙만 하며, 요청마다 디스크를 다시 읽지 않도록 짧게만 메모리 캐시한다.
@@ -173,7 +176,24 @@ function escapeForHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-function renderIndexHtml() {
+function siteOrigin(req) {
+  return `${req.protocol}://${req.get("host")}`;
+}
+
+// Google Search Console / Naver 서치어드바이저의 "HTML 태그" 소유확인 방식용.
+// 각 콘솔에서 발급하는 값을 환경변수로 넣어두면, 코드 수정 없이 <head>에 자동으로 반영된다.
+function verificationMetaTags() {
+  const tags = [];
+  if (process.env.GOOGLE_SITE_VERIFICATION) {
+    tags.push(`<meta name="google-site-verification" content="${escapeForHtml(process.env.GOOGLE_SITE_VERIFICATION)}">`);
+  }
+  if (process.env.NAVER_SITE_VERIFICATION) {
+    tags.push(`<meta name="naver-site-verification" content="${escapeForHtml(process.env.NAVER_SITE_VERIFICATION)}">`);
+  }
+  return tags.join("\n");
+}
+
+function renderIndexHtml(req) {
   const template = fs.readFileSync(VIEW_PATH, "utf-8");
   const appConfig = {
     timeZone: CURRENT.ui.timeZone,
@@ -186,6 +206,9 @@ function renderIndexHtml() {
   return template
     .split("{{LANG}}").join(CURRENT.lang)
     .split("{{PAGE_TITLE}}").join(escapeForHtml(CURRENT.ui.pageTitle))
+    .split("{{META_DESCRIPTION}}").join(escapeForHtml(CURRENT.ui.metaDescription))
+    .split("{{CANONICAL_URL}}").join(escapeForHtml(siteOrigin(req) + "/"))
+    .split("{{VERIFICATION_META}}").join(verificationMetaTags())
     .split("{{LOGO_SUFFIX}}").join(escapeForHtml(CURRENT.ui.logoSuffix))
     .split("{{HEADING2}}").join(escapeForHtml(CURRENT.ui.heading2))
     .split("{{UPDATED_PREFIX}}").join(escapeForHtml(CURRENT.ui.updatedPrefix))
@@ -196,9 +219,19 @@ function renderIndexHtml() {
     .split("{{APP_CONFIG_JSON}}").join(JSON.stringify(appConfig));
 }
 
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain").send(`User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin(req)}/sitemap.xml\n`);
+});
+
+app.get("/sitemap.xml", (req, res) => {
+  res.type("application/xml").send(
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escapeForHtml(siteOrigin(req) + "/")}</loc><changefreq>hourly</changefreq></url></urlset>\n`
+  );
+});
+
 app.get("/", (req, res) => {
   try {
-    res.type("html").send(renderIndexHtml());
+    res.type("html").send(renderIndexHtml(req));
   } catch (err) {
     res.status(500).send("Failed to render page: " + err.message);
   }
