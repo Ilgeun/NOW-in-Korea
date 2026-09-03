@@ -55,7 +55,7 @@ cp .env.example .env
 |---|---|---|
 | `COUNTRY` | 서비스 지역 | `KR`, `JP`, `US`, `GB`, `DE` 중 하나 |
 | `GEMINI_API_KEY` | 클라우드 배포 시에만 필요 | [aistudio.google.com/apikey](https://aistudio.google.com/apikey)에서 발급 |
-| `GEMINI_MODEL` | 선택. 요약에 쓸 모델 | 기본값 `gemini-2.5-flash` |
+| `GEMINI_MODEL` | 선택. 요약에 쓸 모델 | 기본값 `gemini-3.6-flash` |
 
 ### 실행
 
