@@ -10,11 +10,14 @@
     "generate-audio": "node src/generate-audio.js",
     "studio": "remotion studio src/index.js",
     "debug-stills": "node src/debug-stills.js",
+    "youtube-auth": "node src/youtube-auth.js",
+    "upload": "node src/upload-youtube.js",
     "render": "npm run prepare-data && npm run generate-script && npm run generate-image && npm run generate-audio && node src/render-all.js"
   },
   "dependencies": {
     "@google/genai": "2.20.0",
     "@remotion/bundler": "4.0.520",
+    "googleapis": "178.0.0",
     "dotenv": "17.4.2",
     "@remotion/cli": "4.0.520",
     "@remotion/google-fonts": "4.0.520",
