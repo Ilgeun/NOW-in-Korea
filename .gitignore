@@ -2,3 +2,13 @@ node_modules/
 .env
 data/
 .DS_Store
+
+# video/ 는 트렌드 데이터로 쇼츠를 렌더링하는 별도 도구. 소스 코드만 커밋하고,
+# 매번 새로 생성되는 결과물(영상/이미지/음성/렌더용 데이터)은 커밋하지 않는다.
+video/out/
+video/public/audio/
+video/public/images/
+video/debug-stills/
+video/props.json
+video/test-audio.*
+video/test-image.png
