@@ -108,6 +108,7 @@ function itemHtml(t) {
           ? `<div class="detail">
               <div class="detail-inner">
                 <span class="ai-tag">${escapeHtml(APP_CONFIG.aiTag)}</span>
+                ${t.overview ? `<p class="ai-overview">${escapeHtml(t.overview)}</p>` : ""}
                 <ul class="ai-summary-list">
                   ${bullets.map((b) => `<li>${summaryBulletHtml(b)}</li>`).join("")}
                 </ul>

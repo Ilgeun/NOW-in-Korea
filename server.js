@@ -112,6 +112,7 @@ function applyLocalEnrichment(trends) {
           topic: match.topic || t.keyword,
           tags: Array.isArray(match.tags) ? match.tags : [],
           category: match.category,
+          overview: match.overview || null,
           summary: match.summary,
         }
       : t;
