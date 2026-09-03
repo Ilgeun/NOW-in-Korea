@@ -13,8 +13,13 @@ function safeFileName(keyword) {
   return keyword.replace(/[^\w가-힣]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+const BASE_HASHTAGS = ["NOWinKorea", "실시간검색어", "오늘의이슈"];
+
 function buildMetadata(trend) {
-  const tagsLine = (trend.tags || []).map((t) => `#${t}`).join(" ");
+  // 그 트렌드에 AI가 만든 태그가 없어도(빈 배열이어도) 해시태그가 항상 뜨도록,
+  // 브랜드 기본 해시태그 뒤에 트렌드별 태그를 이어붙인다.
+  const allTags = [...BASE_HASHTAGS, ...(trend.tags || [])];
+  const tagsLine = allTags.map((t) => `#${t}`).join(" ");
   const title = `${trend.topic} — 지금 화제인 이유 | NOW in Korea`.slice(0, 100);
   const description = [
     trend.overview || "",
@@ -26,7 +31,7 @@ function buildMetadata(trend) {
     "",
     "이 영상은 AI 기술로 제작되었으며, 사용된 이미지는 실제 사건 현장이 아닌 자료화면입니다.",
   ].join("\n");
-  return { title, description, tags: (trend.tags || []).slice(0, 10) };
+  return { title, description, tags: allTags.slice(0, 10) };
 }
 
 async function main() {
