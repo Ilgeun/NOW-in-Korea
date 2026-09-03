@@ -9,6 +9,7 @@
   --border: #e7e8eb;
   --accent: #4c6fff;
   --new-color: #9b5de5;
+  --live: #ef4444;
   --shadow-card: 0 1px 2px rgba(20, 20, 30, 0.04), 0 1px 1px rgba(20, 20, 30, 0.03);
   --radius-lg: 20px;
   --radius-pill: 999px;
@@ -69,6 +70,13 @@ body {
   display: inline-block;
   color: var(--accent);
   font-size: 1.15em;
+}
+.hero-highlight {
+  color: var(--live);
+}
+/* 데스크톱에서는 이 줄바꿈을 없애고 자연스럽게 한 줄로 흐르게 둔다 */
+.heading-break {
+  display: none;
 }
 
 .refresh-note {
@@ -358,4 +366,5 @@ body {
 @media (max-width: 480px) {
   .hero h1 { font-size: 1.7rem; }
   .content, .hero-inner, .topbar-inner, .footnote { padding-left: 16px; padding-right: 16px; }
+  .heading-break { display: block; }
 }

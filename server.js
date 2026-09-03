@@ -193,6 +193,19 @@ function verificationMetaTags() {
   return tags.join("\n");
 }
 
+// heading2Highlight가 설정된 언어(현재 KR)에서는 그 단어 앞에 모바일 전용 줄바꿈을 넣고
+// 빨간색으로 강조한다. 설정 안 된 언어는 그냥 이스케이프된 원문 그대로 쓴다.
+function renderHeading2() {
+  const { heading2, heading2Highlight } = CURRENT.ui;
+  const idx = heading2Highlight ? heading2.indexOf(heading2Highlight) : -1;
+  if (idx === -1) return escapeForHtml(heading2);
+
+  const before = escapeForHtml(heading2.slice(0, idx));
+  const highlight = escapeForHtml(heading2.slice(idx, idx + heading2Highlight.length));
+  const after = escapeForHtml(heading2.slice(idx + heading2Highlight.length));
+  return `${before}<br class="heading-break"><span class="hero-highlight">${highlight}</span>${after}`;
+}
+
 function renderIndexHtml(req) {
   const template = fs.readFileSync(VIEW_PATH, "utf-8");
   const appConfig = {
@@ -210,7 +223,7 @@ function renderIndexHtml(req) {
     .split("{{CANONICAL_URL}}").join(escapeForHtml(siteOrigin(req) + "/"))
     .split("{{VERIFICATION_META}}").join(verificationMetaTags())
     .split("{{LOGO_SUFFIX}}").join(escapeForHtml(CURRENT.ui.logoSuffix))
-    .split("{{HEADING2}}").join(escapeForHtml(CURRENT.ui.heading2))
+    .split("{{HEADING2}}").join(renderHeading2())
     .split("{{UPDATED_PREFIX}}").join(escapeForHtml(CURRENT.ui.updatedPrefix))
     .split("{{UPDATED_SUFFIX}}").join(escapeForHtml(CURRENT.ui.updatedSuffix))
     .split("{{COUNTDOWN_SUFFIX}}").join(escapeForHtml(CURRENT.ui.countdownSuffix))
