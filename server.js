@@ -104,6 +104,28 @@ function readLocalEnrichment() {
   }
 }
 
+// 직전 수집 시점 대비 순위 변동을 계산한다. pending.generatedAt이 바뀔 때(=진짜 새 데이터가
+// 왔을 때)만 스냅샷을 한 칸 전진시키고, 그 사이 30초 캐시 재조회에서는 직전에 계산해둔 값을 그대로 돌려준다.
+let rankTracking = { generatedAt: null, rankByKeyword: null, changes: null };
+
+function computeRankChanges(pending) {
+  if (rankTracking.generatedAt === pending.generatedAt) return rankTracking.changes;
+
+  const currentMap = new Map(pending.items.map((t) => [t.keyword, t.rank]));
+  let changes = null;
+  if (rankTracking.rankByKeyword) {
+    changes = new Map(
+      pending.items.map((t) => {
+        const prevRank = rankTracking.rankByKeyword.get(t.keyword);
+        // prevRank가 없으면 직전 수집(=1시간 전) 순위표엔 없던 키워드라는 뜻 → 새로 진입
+        return [t.keyword, prevRank === undefined ? "new" : prevRank - t.rank];
+      })
+    );
+  }
+  rankTracking = { generatedAt: pending.generatedAt, rankByKeyword: currentMap, changes };
+  return changes;
+}
+
 function applyLocalEnrichment(trends) {
   const byKeyword = readLocalEnrichment();
   if (!byKeyword) return trends;
@@ -146,7 +168,11 @@ async function fetchTrends() {
     pending = { generatedAt: new Date().toISOString(), items: rawTrends };
   }
 
-  const trends = applyLocalEnrichment(pending.items);
+  const rankChanges = computeRankChanges(pending);
+  const trends = applyLocalEnrichment(pending.items).map((t) => ({
+    ...t,
+    rankChange: rankChanges ? rankChanges.get(t.keyword) ?? null : null,
+  }));
 
   // 구글 RSS 항목들의 pubDate 중 가장 최신 값 = 구글이 실제로 이 데이터를 갱신한 시각
   const updatedAt = trends.reduce(
@@ -193,6 +219,19 @@ function verificationMetaTags() {
   return tags.join("\n");
 }
 
+// heading2Highlight가 설정된 언어(현재 KR)에서는 그 단어 앞에 모바일 전용 줄바꿈을 넣고
+// 빨간색으로 강조한다. 설정 안 된 언어는 그냥 이스케이프된 원문 그대로 쓴다.
+function renderHeading2() {
+  const { heading2, heading2Highlight } = CURRENT.ui;
+  const idx = heading2Highlight ? heading2.indexOf(heading2Highlight) : -1;
+  if (idx === -1) return escapeForHtml(heading2);
+
+  const before = escapeForHtml(heading2.slice(0, idx));
+  const highlight = escapeForHtml(heading2.slice(idx, idx + heading2Highlight.length));
+  const after = escapeForHtml(heading2.slice(idx + heading2Highlight.length));
+  return `${before}<br class="heading-break"><span class="hero-highlight">${highlight}</span>${after}`;
+}
+
 function renderIndexHtml(req) {
   const template = fs.readFileSync(VIEW_PATH, "utf-8");
   const appConfig = {
@@ -210,7 +249,7 @@ function renderIndexHtml(req) {
     .split("{{CANONICAL_URL}}").join(escapeForHtml(siteOrigin(req) + "/"))
     .split("{{VERIFICATION_META}}").join(verificationMetaTags())
     .split("{{LOGO_SUFFIX}}").join(escapeForHtml(CURRENT.ui.logoSuffix))
-    .split("{{HEADING2}}").join(escapeForHtml(CURRENT.ui.heading2))
+    .split("{{HEADING2}}").join(renderHeading2())
     .split("{{UPDATED_PREFIX}}").join(escapeForHtml(CURRENT.ui.updatedPrefix))
     .split("{{UPDATED_SUFFIX}}").join(escapeForHtml(CURRENT.ui.updatedSuffix))
     .split("{{COUNTDOWN_SUFFIX}}").join(escapeForHtml(CURRENT.ui.countdownSuffix))

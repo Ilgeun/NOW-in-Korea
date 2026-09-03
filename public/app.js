@@ -77,6 +77,13 @@ function summaryBulletHtml(bullet) {
   return content;
 }
 
+function rankChangeHtml(rankChange) {
+  if (rankChange === "new") return `<span class="rank-change new-entry">NEW</span>`;
+  if (typeof rankChange === "number" && rankChange > 0) return `<span class="rank-change up">▲${rankChange}</span>`;
+  if (typeof rankChange === "number" && rankChange < 0) return `<span class="rank-change down">▼${Math.abs(rankChange)}</span>`;
+  return "";
+}
+
 function itemHtml(t) {
   const bullets = normalizeSummary(t.summary);
   const hasDetail = bullets.length > 0;
@@ -86,7 +93,10 @@ function itemHtml(t) {
   return `
     <li class="trend-item" data-keyword="${escapeHtml(t.keyword)}">
       <div class="trend-row">
-        <span class="rank">${t.rank}</span>
+        <div class="rank-col">
+          <span class="rank">${t.rank}</span>
+          ${rankChangeHtml(t.rankChange)}
+        </div>
         <div class="main-col">
           <p class="keyword">${escapeHtml(title)}</p>
           <div class="meta-row">
