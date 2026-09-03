@@ -18,6 +18,7 @@ const COUNTRIES = {
     numberFormat: { style: "myriad", units: { man: "만", cheon: "천" } },
     ui: {
       pageTitle: "NOW in Korea · 실시간 인기 검색어",
+      metaDescription: "구글 트렌드 공식 데이터를 기반으로 대한민국 실시간 인기 검색어와 관련 뉴스, AI 요약을 한눈에 모아 보여줍니다.",
       logoSuffix: "in Korea",
       heading2: "가장 인기 있는 키워드를 모아봤어요",
       searchPlaceholder: "궁금한 키워드를 검색해보세요 (Enter로 구글 검색)",
@@ -45,6 +46,7 @@ const COUNTRIES = {
     numberFormat: { style: "myriad", units: { man: "万", cheon: "千" } },
     ui: {
       pageTitle: "NOW in Japan · リアルタイム急上昇ワード",
+      metaDescription: "Google Trends公式データに基づき、日本のリアルタイム急上昇キーワードと関連ニュース、AI要約を一目で確認できます。",
       logoSuffix: "in Japan",
       heading2: "人気のキーワードを集めました",
       searchPlaceholder: "気になるキーワードを検索 (Enterでgoogle検索)",
@@ -72,6 +74,7 @@ const COUNTRIES = {
     numberFormat: { style: "thousand", units: { million: "M", thousand: "K" } },
     ui: {
       pageTitle: "NOW in the US · Trending Searches",
+      metaDescription: "See US real-time trending searches, related news, and AI summaries at a glance, based on official Google Trends data.",
       logoSuffix: "in the US",
       heading2: "The most popular keywords, all in one place",
       searchPlaceholder: "Search for a keyword (Enter to search Google)",
@@ -99,6 +102,7 @@ const COUNTRIES = {
     numberFormat: { style: "thousand", units: { million: "M", thousand: "K" } },
     ui: {
       pageTitle: "NOW in the UK · Trending Searches",
+      metaDescription: "See UK real-time trending searches, related news, and AI summaries at a glance, based on official Google Trends data.",
       logoSuffix: "in the UK",
       heading2: "The most popular keywords, all in one place",
       searchPlaceholder: "Search for a keyword (Enter to search Google)",
@@ -126,6 +130,7 @@ const COUNTRIES = {
     numberFormat: { style: "thousand", units: { million: "Mio.", thousand: "Tsd." } },
     ui: {
       pageTitle: "NOW in Germany · Aktuelle Trend-Suchbegriffe",
+      metaDescription: "Aktuelle Trend-Suchbegriffe, passende Nachrichten und KI-Zusammenfassungen aus Deutschland auf einen Blick, basierend auf offiziellen Google-Trends-Daten.",
       logoSuffix: "in Germany",
       heading2: "Die beliebtesten Keywords, gesammelt für dich",
       searchPlaceholder: "Nach einem Keyword suchen (Enter für Google-Suche)",
