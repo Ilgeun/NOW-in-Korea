@@ -28,6 +28,7 @@ try {
   Invoke-Step "src/generate-audio.js"
   Invoke-Step "src/render-all.js"
   Invoke-Step "src/upload-youtube.js"
+  Invoke-Step "src/upload-drive.js"
 
   Write-Host "===== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') cycle done ====="
 } catch {

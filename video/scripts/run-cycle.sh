@@ -12,5 +12,6 @@ node src/generate-image.js
 node src/generate-audio.js
 node src/render-all.js
 node src/upload-youtube.js
+node src/upload-drive.js
 
 echo "===== $(date '+%Y-%m-%d %H:%M:%S') 사이클 완료 ====="
