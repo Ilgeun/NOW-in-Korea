@@ -16,17 +16,18 @@ function formatAsOf(isoString) {
   return `${period} ${get("hour")}시 ${get("minute")}분 기준`;
 }
 
-// 나레이션 첫머리에 붙일 "D일 H시경" 문구. 이 키워드가 트렌드에 처음 잡힌 시점(startedAt) 기준.
+// 나레이션 첫머리에 붙일 "M월 D일 H시경" 문구. 이 키워드가 트렌드에 처음 잡힌 시점(startedAt) 기준.
 function formatIssueTime(isoString) {
   if (!isoString) return null;
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Seoul",
+    month: "numeric",
     day: "numeric",
     hour: "numeric",
     hour12: false,
   }).formatToParts(new Date(isoString));
   const get = (type) => parts.find((p) => p.type === type)?.value;
-  return `${get("day")}일 ${get("hour")}시경`;
+  return `${get("month")}월 ${get("day")}일 ${get("hour")}시경`;
 }
 
 (async () => {
