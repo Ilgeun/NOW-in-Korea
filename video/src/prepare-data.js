@@ -24,7 +24,11 @@ function formatAsOf(isoString) {
   const data = await res.json();
   const asOf = formatAsOf(data.updatedAt);
 
-  const picked = data.trends[0];
+  // 명령줄 인자로 순위를 지정할 수 있다: node src/prepare-data.js 2 → 2위 트렌드 선택 (기본값 1위)
+  const rank = Number(process.argv[2]) || 1;
+  const picked = data.trends.find((t) => t.rank === rank);
+  if (!picked) throw new Error(`${rank}위 트렌드를 찾을 수 없습니다 (전체 ${data.trends.length}개)`);
+
   const summary = Array.isArray(picked.summary) ? picked.summary : [];
   const trend = {
     rank: picked.rank,
