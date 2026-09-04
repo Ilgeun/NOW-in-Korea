@@ -16,6 +16,19 @@ function formatAsOf(isoString) {
   return `${period} ${get("hour")}시 ${get("minute")}분 기준`;
 }
 
+// 나레이션 첫머리에 붙일 "D일 H시경" 문구. 이 키워드가 트렌드에 처음 잡힌 시점(startedAt) 기준.
+function formatIssueTime(isoString) {
+  if (!isoString) return null;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    day: "numeric",
+    hour: "numeric",
+    hour12: false,
+  }).formatToParts(new Date(isoString));
+  const get = (type) => parts.find((p) => p.type === type)?.value;
+  return `${get("day")}일 ${get("hour")}시경`;
+}
+
 (async () => {
   // 로컬 파일이 아니라 실제 배포된 사이트에서 지금 서빙 중인 데이터를 그대로 가져온다.
   console.log(`[prepare-data] ${SITE_URL}/api/trends 에서 실시간 데이터 가져오는 중...`);
@@ -39,6 +52,7 @@ function formatAsOf(isoString) {
     overview: picked.overview || "",
     bullets: summary.slice(0, 2).map((b) => ({ text: b.text, source: b.source })),
     asOf,
+    issueTime: formatIssueTime(picked.startedAt),
   };
 
   fs.writeFileSync(OUT_PATH, JSON.stringify({ trends: [trend] }, null, 2));

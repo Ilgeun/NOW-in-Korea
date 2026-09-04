@@ -59,6 +59,13 @@ async function generateSegments(ai, trend) {
   for (const trend of trends) {
     console.log(`[generate-script] (${trend.rank}위) ${trend.keyword} 대본 생성 중...`);
     const segments = await generateSegments(ai, trend);
+
+    // 나레이션 맨 첫 문장 앞에 "이 키워드가 트렌드에 처음 잡힌 시점"을 고정 문구로 붙인다
+    // (AI가 매번 다르게 쓰지 않도록 코드에서 직접 붙임 — 화면 캡션에는 안 붙고 음성에만 반영됨).
+    if (trend.issueTime && segments[0]) {
+      segments[0].narration = `${trend.issueTime}, ${segments[0].narration}`;
+    }
+
     trend.script = [...segments, OUTRO];
     console.log(`[generate-script] 완료: 세그먼트 ${trend.script.length}개`);
   }
