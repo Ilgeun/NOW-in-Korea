@@ -1,7 +1,7 @@
 {
-  "name": "practice",
+  "name": "now-in-korea",
   "version": "1.0.0",
-  "description": "",
+  "description": "Google Trends 실시간 인기 검색어에 뉴스 링크와 AI 요약을 붙여 보여주는 웹앱",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
