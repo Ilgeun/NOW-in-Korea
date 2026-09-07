@@ -19,8 +19,6 @@ Google Trends 공식 RSS(Daily Search Trends)를 기반으로 실시간 인기 �
 - AI 요약/카테고리/해시태그 자동 태깅, 직전 수집 대비 순위 변동(▲▼NEW) 표시
 - 1시간 주기로 자동 갱신 (백그라운드 스케줄러), 데이터가 오래되면 방문 시점에 자동 복구(self-heal)
 - SEO 기본기: 메타 설명·OG 태그, `robots.txt`/`sitemap.xml` 자동 생성, Google/Naver 서치콘솔 연동
-- **[`video/`](video/): 트렌드를 9:16 뉴스 브리핑 쇼츠로 자동 제작 + YouTube 업로드 + Google Drive 백업**
-  (Remotion 렌더링 + Gemini 대본/이미지/TTS + YouTube Data API, 하루 4회 자동 실행 — 자세한 내용은 [video/README.md](video/README.md) 참고)
 
 ## 동작 구조
 
@@ -83,9 +81,6 @@ npm start
 
 - **환경변수 하나로 갈리는 이원화 아키텍처**: 로컬(macOS launchd + Claude CLI)과 클라우드(Railway + Gemini API) 두 실행 환경이 `GEMINI_API_KEY` 존재 여부만으로 자동 분기 — 로컬 개발 흐름을 안 건드리고 클라우드 배포를 추가함
 - **운영 중 모델 폐기 대응**: 배포 직후 `gemini-2.5-flash`가 신규 사용자에게 지원 중단되며 프로덕션 장애 발생 → API 에러 메시지로 원인 파악 후 핫픽스
-- **OAuth 스코프 제약 우회**: Google이 `youtube.upload`와 `drive.file`을 한 요청에 같이 승인 못 하게 막아둔 걸 발견 → 인증을 두 번(서비스별)으로 분리
-- **크로스플랫폼 자동화**: macOS(launchd/bash)와 Windows(Task Scheduler/PowerShell) 양쪽에 동일한 자동화 파이프라인 구성, Windows PowerShell 5.1의 비-BOM UTF-8 파싱 이슈(한글 텍스트로 인한 구문 오류) 디버깅
-- **플랫폼 정책 준수**: YouTube의 "합성 콘텐츠" 공개 정책(`containsSyntheticMedia`)에 맞춰 AI 생성 이미지·음성임을 API 레벨에서 명시적으로 태깅
 - **SEO 파이프라인**: 동적 `robots.txt`/`sitemap.xml`, Google Search Console·네이버 서치어드바이저 소유확인 자동화(환경변수만 추가하면 `<head>`에 반영)
 
 ## 기술 스택
@@ -95,8 +90,6 @@ npm start
 - [dotenv](https://github.com/motdotla/dotenv) — 환경변수 관리
 - [Claude CLI](https://docs.claude.com/en/docs/claude-code) — 키워드 요약/카테고리 생성 (로컬)
 - [Gemini API (@google/genai)](https://github.com/googleapis/js-genai) — 키워드 요약/카테고리 생성 (클라우드)
-- [Remotion](https://www.remotion.dev/) — 트렌드 데이터 → 9:16 쇼츠 영상 렌더링
-- [googleapis](https://github.com/googleapis/google-api-nodejs-client) — YouTube Data API v3, Google Drive API 연동
 
 ## 프로젝트 구조
 
